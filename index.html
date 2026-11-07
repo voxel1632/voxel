@@ -369,6 +369,91 @@ View Mod
 VOXEL • Space Themed Minecraft Mod Hub
 
 </footer>
+<button
+onclick="openAdmin()"
+style="
+position:fixed;
+bottom:20px;
+right:20px;
+background:#00e5ff;
+color:black;
+border:none;
+padding:15px 20px;
+border-radius:30px;
+font-weight:bold;
+cursor:pointer;
+">
 
++ ADD MOD
+
+</button>
+
+<div
+
+id="adminPanel"
+
+style="
+display:none;
+background:#111827;
+padding:20px;
+border-radius:15px;
+margin:20px;
+">
+
+<h2>
+
+Upload New Mod
+
+</h2>
+
+<input
+id="modName"
+placeholder="Mod Name">
+
+<br><br>
+
+<input
+id="modImage"
+placeholder="Image URL">
+
+<br><br>
+
+<input
+id="modRating"
+placeholder="Rating">
+
+<br><br>
+
+<textarea
+id="modDescription"
+placeholder="Description">
+</textarea>
+
+<br><br>
+
+<input
+id="modDownload"
+placeholder="Download URL">
+
+<br><br>
+
+<button
+onclick="addMod()">
+
+Save Mod
+
+</button>
+
+</div>
+
+<div
+
+id="modsContainer"
+
+style="
+padding:20px;
+">
+
+</div>
 </body>
 </html>
