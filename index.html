@@ -1,171 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VOXEL - Explore The Mod Galaxy</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b1d">
+  <meta name="description" content="Discover and explore community-made Minecraft Bedrock add-ons in the VOXEL mod galaxy.">
+  <title>VOXEL — Explore the Mod Galaxy</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b1d;
+      --surface: #101832;
+      --surface-2: #172343;
+      --surface-3: #202e52;
+      --cyan: #45e6f5;
+      --purple: #a47aff;
+      --text: #f5f7ff;
+      --muted: #aab6d3;
+      --line: rgba(192, 211, 255, .13);
+      --danger: #ff6b85;
+      --radius: 20px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .38);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+      background: radial-gradient(ellipse at 50% -18%, #263b71 0, transparent 42%), linear-gradient(180deg, #070b1d, #0b1530 58%, #0c1730);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .stars, .stars::before, .stars::after { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+    .stars { opacity: .7; background-image: radial-gradient(1px 1px at 9% 12%, #fff 99%, transparent), radial-gradient(2px 2px at 29% 42%, #b8d5ff 99%, transparent), radial-gradient(1px 1px at 79% 18%, #fff 99%, transparent), radial-gradient(1px 1px at 64% 69%, #fff 99%, transparent), radial-gradient(2px 2px at 91% 81%, #b8d5ff 99%, transparent), radial-gradient(1px 1px at 43% 87%, #fff 99%, transparent); background-size: 390px 320px; }
+    .stars::before { content: ""; opacity: .5; background-image: radial-gradient(1px 1px at 18% 72%, #fff 99%, transparent), radial-gradient(1px 1px at 55% 23%, #fff 99%, transparent), radial-gradient(2px 2px at 88% 48%, #b8d5ff 99%, transparent); background-size: 530px 430px; animation: drift 90s linear infinite; }
+    @keyframes drift { to { transform: translate3d(-30px, 30px, 0); } }
+    .site-header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 15px max(5%, calc((100% - 1320px) / 2)); border-bottom: 1px solid var(--line); background: rgba(7, 11, 29, .82); backdrop-filter: blur(16px); }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--text); text-decoration: none; font-size: 1.65rem; font-weight: 950; letter-spacing: .12em; }
+    .brand-mark { display: grid; width: 36px; aspect-ratio: 1; place-items: center; border: 1px solid rgba(69, 230, 245, .5); border-radius: 11px; color: var(--cyan); background: linear-gradient(145deg, rgba(69, 230, 245, .2), rgba(164, 122, 255, .2)); box-shadow: 0 0 24px rgba(69, 230, 245, .15); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .admin-status { color: var(--muted); font-size: .82rem; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: rgba(255,255,255,.06); text-decoration: none; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+    .button:hover { transform: translateY(-2px); border-color: rgba(69,230,245,.5); background: rgba(69,230,245,.1); }
+    .button-primary { border: 0; color: #07121e; font-weight: 800; background: linear-gradient(100deg, var(--cyan), #8aa8ff 55%, var(--purple)); }
+    .button-danger { color: #ffd9df; border-color: rgba(255,107,133,.35); background: rgba(255,107,133,.1); }
+    .hero { position: relative; max-width: 1000px; margin: 0 auto; padding: 92px 20px 46px; text-align: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid rgba(69,230,245,.22); border-radius: 99px; color: #b6f8ff; background: rgba(69,230,245,.07); font-size: .78rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+    .hero h1 { margin: 20px 0 12px; font-size: clamp(3rem, 8vw, 6.4rem); line-height: .96; letter-spacing: -.065em; background: linear-gradient(100deg, #fff 12%, #7ceeff 49%, #b895ff 86%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero p { max-width: 660px; margin: 0 auto; color: #c2cce6; font-size: clamp(1rem, 2.2vw, 1.22rem); line-height: 1.7; }
+    .search-wrap { position: relative; max-width: 650px; margin: 30px auto 0; }
+    .search-wrap span { position: absolute; top: 50%; left: 18px; transform: translateY(-50%); color: var(--muted); font-size: 1.15rem; }
+    .search-wrap input { width: 100%; min-height: 58px; padding: 15px 20px 15px 50px; border: 1px solid rgba(197,214,255,.17); border-radius: 16px; color: var(--text); background: rgba(14,24,49,.86); box-shadow: 0 15px 50px rgba(0,0,0,.2); }
+    .search-wrap input::placeholder { color: #8290b0; }
+    .hero-banner { display: flex; align-items: center; justify-content: center; gap: 13px; max-width: 1050px; margin: 8px auto 34px; padding: 18px 22px; border: 1px solid rgba(164,122,255,.28); border-radius: 17px; color: #f3edff; background: linear-gradient(100deg, rgba(118,81,210,.23), rgba(49,171,205,.14)); text-align: center; }
+    .hero-banner strong { color: #c6faff; }
+    main { max-width: 1440px; margin: 0 auto; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 5% 22px; }
+    .toolbar h2 { margin: 0; font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.03em; }
+    .result-count { color: var(--muted); font-size: .9rem; }
+    .categories { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin: 0 5% 30px; }
+    .category-btn { padding: 9px 15px; border: 1px solid var(--line); border-radius: 99px; color: #c3cce0; background: rgba(255,255,255,.035); cursor: pointer; transition: .2s ease; }
+    .category-btn:hover, .category-btn.active { border-color: rgba(69,230,245,.52); color: #e9fcff; background: rgba(69,230,245,.12); }
+    .mods-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 275px), 1fr)); gap: 22px; padding: 0 5% 72px; }
+    .mod-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(160deg, rgba(20,31,61,.96), rgba(11,19,41,.97)); box-shadow: 0 14px 40px rgba(0,0,0,.18); transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+    .mod-card:hover { transform: translateY(-5px); border-color: rgba(69,230,245,.32); box-shadow: 0 22px 50px rgba(0,0,0,.3); }
+    .card-art { position: relative; height: 190px; overflow: hidden; background: radial-gradient(circle at 70% 25%, rgba(69,230,245,.2), transparent 35%), linear-gradient(135deg, #1d2b55, #10142b 65%, #342459); }
+    .card-art img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .mod-card:hover .card-art img { transform: scale(1.04); }
+    .category-tag { position: absolute; top: 13px; left: 13px; padding: 6px 10px; border: 1px solid rgba(255,255,255,.2); border-radius: 99px; color: #f2f5ff; background: rgba(6,11,26,.72); backdrop-filter: blur(8px); font-size: .75rem; font-weight: 750; }
+    .card-content { padding: 18px; }
+    .card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-heading h3 { margin: 0; font-size: 1.18rem; }
+    .rating-summary { flex: 0 0 auto; color: #ffd76b; font-size: .85rem; white-space: nowrap; }
+    .card-description { min-height: 48px; margin: 10px 0 15px; color: var(--muted); font-size: .92rem; line-height: 1.55; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; color: #8998b9; font-size: .8rem; }
+    .card-actions { display: flex; gap: 9px; }
+    .card-actions .button { flex: 1; min-height: 39px; padding: 8px 10px; font-size: .88rem; }
+    .empty-state { grid-column: 1 / -1; padding: 55px 20px; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--text); font-size: 1.2rem; }
+    footer { padding: 24px 5%; border-top: 1px solid var(--line); color: #8491ae; text-align: center; font-size: .86rem; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(2,5,16,.78); backdrop-filter: blur(9px); }
+    .modal-backdrop[hidden] { display: none; }
+    .modal { position: relative; width: min(100%, 680px); max-height: min(90vh, 900px); overflow-y: auto; border: 1px solid rgba(181,203,255,.19); border-radius: 22px; background: linear-gradient(160deg, #172344, #0c142a 75%); box-shadow: var(--shadow); }
+    .modal-wide { width: min(100%, 850px); }
+    .modal-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 18px 22px; border-bottom: 1px solid var(--line); background: rgba(17,27,53,.95); backdrop-filter: blur(12px); }
+    .modal-header h2 { margin: 0; font-size: 1.25rem; }
+    .close-btn { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); background: transparent; cursor: pointer; font-size: 1.3rem; }
+    .modal-body { padding: 22px; }
+    .detail-cover { width: 100%; max-height: 350px; object-fit: cover; border-radius: 15px; background: var(--surface-2); }
+    .detail-topline { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 18px 0 8px; }
+    .detail-topline h2 { margin: 0; font-size: clamp(1.5rem, 4vw, 2.1rem); }
+    .detail-category { color: #a5eefa; font-size: .85rem; }
+    .detail-description { color: #c0cbe1; line-height: 1.7; white-space: pre-wrap; }
+    .detail-info { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 14px 0; color: var(--muted); font-size: .87rem; }
+    .gallery-title { margin: 24px 0 12px; font-size: 1rem; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; }
+    .gallery img { width: 100%; height: 112px; object-fit: cover; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); cursor: zoom-in; }
+    .rate-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 22px 0; padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.025); }
+    .rate-row span { margin-right: auto; color: var(--muted); font-size: .9rem; }
+    .star-btn { padding: 4px; border: 0; color: #64708a; background: transparent; cursor: pointer; font-size: 1.55rem; }
+    .star-btn.selected, .star-btn:hover { color: #ffd76b; }
+    .detail-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .field { display: grid; gap: 7px; }
+    .field-full { grid-column: 1 / -1; }
+    .field label { color: #c7d2e9; font-size: .86rem; font-weight: 650; }
+    .field input, .field textarea, .field select { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 11px; color: var(--text); background: #0a1228; }
+    .field textarea { min-height: 105px; resize: vertical; }
+    .form-note { margin: 14px 0 0; color: var(--muted); font-size: .8rem; line-height: 1.5; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 40; max-width: min(400px, calc(100vw - 40px)); padding: 13px 17px; border: 1px solid rgba(69,230,245,.3); border-radius: 13px; color: var(--text); background: #142346; box-shadow: var(--shadow); animation: toast-in .2s ease-out; }
+    .toast[hidden] { display: none; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 620px) {
+      .site-header { padding: 12px 4%; }
+      .brand { font-size: 1.35rem; }
+      .admin-status { display: none; }
+      .header-actions .button { padding: 9px 11px; font-size: .84rem; }
+      .hero { padding-top: 66px; }
+      .hero-banner { margin-right: 4%; margin-left: 4%; font-size: .9rem; }
+      .toolbar { margin-right: 4%; margin-left: 4%; align-items: flex-end; }
+      .mods-grid { padding-right: 4%; padding-left: 4%; }
+      .categories { margin-right: 4%; margin-left: 4%; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field-full { grid-column: auto; }
+      .modal-body { padding: 17px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="VOXEL home"><span class="brand-mark" aria-hidden="true">▦</span>VOXEL</a>
+    <div class="header-actions">
+      <span class="admin-status" id="adminStatus" aria-live="polite">Explorer mode</span>
+      <button class="button" id="adminButton" type="button">🔒 Admin login</button>
+      <button class="button button-primary" id="addButton" type="button" hidden>＋ Add Mod</button>
+    </div>
+  </header>
 
-<style>
-:root{
---bg:#050816;
---card:#0c1228;
---card2:#131d3b;
---cyan:#25dfff;
---purple:#8c52ff;
---white:#ffffff;
---text:#d8e7ff;
-}
+  <section class="hero" id="top">
+    <span class="eyebrow">✦ The Bedrock add-on universe</span>
+    <h1>Find your next<br>world.</h1>
+    <p>Discover community-made Minecraft Bedrock mods, add-ons, and worlds. Your next adventure is only a click away.</p>
+    <label class="search-wrap" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search mods, categories, or creators…" autocomplete="off"></label>
+  </section>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,Arial,sans-serif;
-}
+  <main>
+    <div class="hero-banner"><span aria-hidden="true">🚀</span><span><strong>Welcome to the galaxy.</strong> Browse the collection, rate your favorites, and build something amazing.</span></div>
+    <div class="toolbar"><h2>Explore the mods</h2><span class="result-count" id="resultCount" aria-live="polite"></span></div>
+    <nav class="categories" id="categories" aria-label="Filter by category"></nav>
+    <section class="mods-grid" id="modsGrid" aria-label="Minecraft Bedrock mods"></section>
+  </main>
 
-body{
-background:linear-gradient(180deg,#030713,#081225,#0b1630);
-color:var(--white);
-overflow-x:hidden;
-min-height:100vh;
-}
+  <footer>VOXEL is a community showcase and is not affiliated with Mojang or Microsoft. Minecraft is a trademark of Mojang Synergies AB.</footer>
 
-#stars,#stars2,#stars3{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-}
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header"><h2 id="modalTitle">Mod details</h2><button class="close-btn" id="closeModal" type="button" aria-label="Close dialog">×</button></div>
+      <div class="modal-body" id="modalBody"></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-.star{
-position:absolute;
-background:white;
-border-radius:50%;
-animation:twinkle 4s infinite;
-}
+  <script>
+    (() => {
+      'use strict';
 
-@keyframes twinkle{
-0%,100%{opacity:.2}
-50%{opacity:1}
-}
+      // Change this demo password before publishing. A password in client-side code is not secure.
+      const ADMIN_PASSWORD = 'voxeladmin';
+      const MODS_KEY = 'voxel-mods-v1';
+      const RATINGS_KEY = 'voxel-ratings-v1';
+      const categories = ['All', 'Adventure', 'Creatures', 'Technology', 'Magic', 'Decor', 'Worlds'];
+      const starterMods = [
+        { id: 'mobs-of-the-deep', title: 'Mobs of the Deep', category: 'Creatures', creator: 'AstraForge', version: '1.4.2', description: 'Bring the ocean to life with strange new creatures, glowing reefs, and mysterious deep-sea encounters. Explore carefully—some things in the dark are best left undisturbed.', cover: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2025-02-14' },
+        { id: 'starlight-kingdoms', title: 'Starlight Kingdoms', category: 'Adventure', creator: 'NovaBuilds', version: '2.0.0', description: 'Set out across a chain of handcrafted islands, uncover forgotten ruins, and build your own sky kingdom. Includes new structures and exploration challenges.', cover: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2025-01-27' },
+        { id: 'copperworks', title: 'Copperworks', category: 'Technology', creator: 'RedstoneRex', version: '1.2.1', description: 'Expand your workshop with useful copper machines, clever storage, and new redstone-friendly blocks. Build a factory that fits right into your survival world.', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2025-01-10' },
+        { id: 'wildwood-witches', title: 'Wildwood Witches', category: 'Magic', creator: 'MoonlitMoss', version: '1.0.8', description: 'Gather ingredients beneath ancient trees, craft curious charms, and discover a little magic hidden in the forest. A cozy add-on for adventurous potion makers.', cover: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2024-12-19' },
+        { id: 'tiny-cottage-pack', title: 'Tiny Cottage Pack', category: 'Decor', creator: 'BlockAndBough', version: '3.1', description: 'Give your builds a warm, lived-in feel with cottage-inspired furniture, plants, and decorative details. Made for builders who love the little things.', cover: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2024-11-08' },
+        { id: 'frostfall-survival', title: 'Frostfall Survival', category: 'Worlds', creator: 'NorthstarGames', version: '1.5', description: 'A frozen frontier, limited supplies, and a trail of clues. Can you make it through the long winter and uncover what happened to the outpost?', cover: 'https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=1000&q=85', screenshots: ['https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=700&q=80', 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=700&q=80'], download: '', createdAt: '2024-10-22' }
+      ];
 
-header{
-position:sticky;
-top:0;
-z-index:50;
-background:rgba(3,7,19,.85);
-backdrop-filter:blur(10px);
-padding:15px 5%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid rgba(255,255,255,.1);
-}
+      const grid = document.getElementById('modsGrid');
+      const categoryNav = document.getElementById('categories');
+      const searchInput = document.getElementById('searchInput');
+      const resultCount = document.getElementById('resultCount');
+      const backdrop = document.getElementById('modalBackdrop');
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      const adminButton = document.getElementById('adminButton');
+      const addButton = document.getElementById('addButton');
+      const adminStatus = document.getElementById('adminStatus');
+      const toast = document.getElementById('toast');
+      let mods = readStorage(MODS_KEY, starterMods);
+      let ratings = readStorage(RATINGS_KEY, {});
+      let activeCategory = 'All';
+      let isAdmin = false;
+      let toastTimer;
+      let currentModId = null;
+      let lastFocusedElement = null;
 
-.logo{
-font-size:32px;
-font-weight:900;
-background:linear-gradient(90deg,var(--cyan),var(--purple));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
+      function readStorage(key, fallback) {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(key));
+          return parsed ?? fallback;
+        } catch (error) {
+          console.warn(`Could not read ${key} from localStorage.`, error);
+          return fallback;
+        }
+      }
+      function saveMods() {
+        try { localStorage.setItem(MODS_KEY, JSON.stringify(mods)); return true; }
+        catch (error) { showToast('Could not save: browser storage may be full or unavailable.'); return false; }
+      }
+      function saveRatings() {
+        try { localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings)); return true; }
+        catch (error) { showToast('Could not save your rating in this browser.'); return false; }
+      }
+      function make(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+      function safeImage(url, fallback = '') {
+        if (typeof url !== 'string' || !url.trim()) return fallback;
+        try { const parsed = new URL(url, location.href); return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : fallback; }
+        catch { return fallback; }
+      }
+      function getRatingSummary(id) {
+        const values = Object.values(ratings[id] || {}).filter(value => Number.isInteger(value) && value >= 1 && value <= 5);
+        if (!values.length) return { average: 0, count: 0 };
+        return { average: values.reduce((sum, value) => sum + value, 0) / values.length, count: values.length };
+      }
+      function renderCategories() {
+        categoryNav.replaceChildren();
+        categories.forEach(category => {
+          const button = make('button', `category-btn${category === activeCategory ? ' active' : ''}`, category);
+          button.type = 'button';
+          button.setAttribute('aria-pressed', String(category === activeCategory));
+          button.addEventListener('click', () => { activeCategory = category; renderCategories(); renderMods(); });
+          categoryNav.append(button);
+        });
+      }
+      function renderMods() {
+        const query = searchInput.value.trim().toLowerCase();
+        const visible = mods.filter(mod => {
+          const categoryMatch = activeCategory === 'All' || mod.category === activeCategory;
+          const text = `${mod.title} ${mod.category} ${mod.creator} ${mod.description}`.toLowerCase();
+          return categoryMatch && text.includes(query);
+        });
+        resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'mod' : 'mods'}`;
+        grid.replaceChildren();
+        if (!visible.length) {
+          const empty = make('div', 'empty-state');
+          empty.append(make('strong', '', 'No mods found in this part of the galaxy.'), document.createTextNode('Try another search or category.'));
+          grid.append(empty);
+          return;
+        }
+        visible.forEach(mod => {
+          const card = make('article', 'mod-card');
+          const art = make('div', 'card-art');
+          const image = make('img');
+          image.src = safeImage(mod.cover);
+          image.alt = `${mod.title} cover art`;
+          image.loading = 'lazy';
+          image.addEventListener('error', () => { image.hidden = true; }, { once: true });
+          art.append(image, make('span', 'category-tag', mod.category || 'Other'));
+          const content = make('div', 'card-content');
+          const heading = make('div', 'card-heading');
+          heading.append(make('h3', '', mod.title));
+          const summary = getRatingSummary(mod.id);
+          heading.append(make('span', 'rating-summary', summary.count ? `★ ${summary.average.toFixed(1)} (${summary.count})` : '☆ New'));
+          const description = make('p', 'card-description', mod.description || 'A new adventure awaits.');
+          const meta = make('div', 'card-meta');
+          meta.append(make('span', '', `by ${mod.creator || 'Community creator'}`), make('span', '', `v${mod.version || '1.0'}`));
+          const actions = make('div', 'card-actions');
+          const view = make('button', 'button button-primary', 'View Mod');
+          view.type = 'button'; view.addEventListener('click', () => openDetails(mod.id));
+          actions.append(view);
+          content.append(heading, description, meta, actions);
+          card.append(art, content);
+          grid.append(card);
+        });
+      }
+      function showToast(message) {
+        toast.textContent = message;
+        toast.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toast.hidden = true; }, 3200);
+      }
+      function openModal(title, wide = false) {
+        lastFocusedElement = document.activeElement;
+        modalTitle.textContent = title;
+        modal.classList.toggle('modal-wide', wide);
+        backdrop.hidden = false;
+        document.getElementById('closeModal').focus();
+      }
+      function closeModal() {
+        backdrop.hidden = true;
+        modalBody.replaceChildren();
+        currentModId = null;
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') lastFocusedElement.focus();
+      }
+      function openDetails(id) {
+        const mod = mods.find(item => item.id === id);
+        if (!mod) return;
+        currentModId = id;
+        modalBody.replaceChildren();
+        const cover = make('img', 'detail-cover');
+        cover.src = safeImage(mod.cover);
+        cover.alt = `${mod.title} cover art`;
+        cover.addEventListener('error', () => { cover.hidden = true; }, { once: true });
+        const topline = make('div', 'detail-topline');
+        topline.append(make('h2', '', mod.title), make('span', 'detail-category', mod.category || 'Other'));
+        const description = make('p', 'detail-description', mod.description || 'A new adventure awaits.');
+        const info = make('div', 'detail-info');
+        info.append(make('span', '', `Creator: ${mod.creator || 'Community creator'}`), make('span', '', `Version: ${mod.version || '1.0'}`));
+        const summary = getRatingSummary(id);
+        info.append(make('span', '', summary.count ? `Rating: ${summary.average.toFixed(1)} / 5 (${summary.count} ${summary.count === 1 ? 'rating' : 'ratings'})` : 'Not rated yet'));
+        modalBody.append(cover, topline, description, info);
+        const galleryUrls = (Array.isArray(mod.screenshots) ? mod.screenshots : []).map(url => safeImage(url)).filter(Boolean);
+        if (galleryUrls.length) {
+          modalBody.append(make('h3', 'gallery-title', 'Screenshots'));
+          const gallery = make('div', 'gallery');
+          galleryUrls.forEach((url, index) => {
+            const image = make('img'); image.src = url; image.alt = `${mod.title} screenshot ${index + 1}`; image.loading = 'lazy';
+            image.addEventListener('error', () => image.remove(), { once: true });
+            image.addEventListener('click', () => window.open(url, '_blank', 'noopener,noreferrer'));
+            gallery.append(image);
+          });
+          modalBody.append(gallery);
+        }
+        const rateRow = make('div', 'rate-row');
+        rateRow.append(make('span', '', 'Rate this mod (saved on this device)'));
+        const myRating = ratings[id]?.local || 0;
+        for (let value = 1; value <= 5; value++) {
+          const star = make('button', `star-btn${value <= myRating ? ' selected' : ''}`, '★');
+          star.type = 'button'; star.setAttribute('aria-label', `Rate ${value} out of 5`); star.setAttribute('aria-pressed', String(value === myRating));
+          star.addEventListener('click', () => {
+            ratings[id] = { ...(ratings[id] || {}), local: value };
+            if (saveRatings()) { showToast(`You rated ${mod.title} ${value} out of 5.`); openDetails(id); renderMods(); }
+          });
+          rateRow.append(star);
+        }
+        modalBody.append(rateRow);
+        const actions = make('div', 'detail-actions');
+        if (mod.download && safeImage(mod.download)) {
+          const download = make('a', 'button button-primary', '⬇ Download');
+          download.href = safeImage(mod.download); download.target = '_blank'; download.rel = 'noopener noreferrer';
+          actions.append(download);
+        }
+        if (isAdmin) {
+          const edit = make('button', 'button', '✎ Edit Mod'); edit.type = 'button'; edit.addEventListener('click', () => openModForm(id));
+          const remove = make('button', 'button button-danger', 'Delete Mod'); remove.type = 'button'; remove.addEventListener('click', () => deleteMod(id));
+          actions.append(edit, remove);
+        }
+        modalBody.append(actions);
+        openModal('Mod details', true);
+      }
+      function openLogin() {
+        modalBody.replaceChildren();
+        const form = make('form');
+        const fields = make('div', 'form-grid');
+        const wrapper = make('div', 'field field-full');
+        const label = make('label', '', 'Admin password'); label.htmlFor = 'adminPassword';
+        const input = make('input'); input.id = 'adminPassword'; input.type = 'password'; input.autocomplete = 'current-password'; input.required = true; input.placeholder = 'Enter admin password';
+        wrapper.append(label, input); fields.append(wrapper);
+        const note = make('p', 'form-note', 'Demo password: voxeladmin. Change ADMIN_PASSWORD in the page source before sharing this site. Client-side passwords are not secure.');
+        const actions = make('div', 'form-actions');
+        const cancel = make('button', 'button', 'Cancel'); cancel.type = 'button'; cancel.addEventListener('click', closeModal);
+        const submit = make('button', 'button button-primary', 'Unlock admin'); submit.type = 'submit';
+        actions.append(cancel, submit); form.append(fields, note, actions);
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          if (input.value !== ADMIN_PASSWORD) { showToast('That password did not unlock the admin controls.'); input.value = ''; input.focus(); return; }
+          isAdmin = true; updateAdminUI(); closeModal(); showToast('Admin controls unlocked for this session.'); renderMods();
+        });
+        modalBody.append(form); openModal('Admin login'); input.focus();
+      }
+      function updateAdminUI() {
+        adminButton.textContent = isAdmin ? '🔓 Log out' : '🔒 Admin login';
+        adminStatus.textContent = isAdmin ? 'Admin mode enabled' : 'Explorer mode';
+        addButton.hidden = !isAdmin;
+      }
+      function openModForm(id = null) {
+        if (!isAdmin) { showToast('Unlock admin mode to manage mods.'); return; }
+        const existing = id ? mods.find(item => item.id === id) : null;
+        if (id && !existing) return;
+        modalBody.replaceChildren();
+        const form = make('form');
+        const fields = make('div', 'form-grid');
+        const definitions = [
+          { key: 'title', label: 'Mod title', required: true, placeholder: 'e.g. Crystal Caverns' },
+          { key: 'creator', label: 'Creator', required: true, placeholder: 'Creator name' },
+          { key: 'category', label: 'Category', type: 'select', required: true },
+          { key: 'version', label: 'Version', placeholder: 'e.g. 1.0.0' },
+          { key: 'cover', label: 'Cover image URL', placeholder: 'https://…', full: true },
+          { key: 'screenshotsText', label: 'Screenshot image URLs', type: 'textarea', placeholder: 'One image URL per line', full: true },
+          { key: 'download', label: 'Download URL (optional)', placeholder: 'https://…', full: true },
+          { key: 'description', label: 'Description', type: 'textarea', required: true, placeholder: 'What makes this add-on special?', full: true }
+        ];
+        const controls = {};
+        definitions.forEach(def => {
+          const wrapper = make('div', `field${def.full ? ' field-full' : ''}`);
+          const label = make('label', '', def.label); label.htmlFor = `field-${def.key}`;
+          let control;
+          if (def.type === 'select') {
+            control = make('select');
+            categories.filter(category => category !== 'All').forEach(category => { const option = make('option', '', category); option.value = category; control.append(option); });
+          } else if (def.type === 'textarea') control = make('textarea');
+          else control = make('input');
+          control.id = `field-${def.key}`; control.name = def.key; control.required = Boolean(def.required);
+          if (def.placeholder) control.placeholder = def.placeholder;
+          if (def.key === 'screenshotsText') control.value = Array.isArray(existing?.screenshots) ? existing.screenshots.join('\n') : '';
+          else control.value = existing?.[def.key] || '';
+          controls[def.key] = control;
+          wrapper.append(label, control); fields.append(wrapper);
+        });
+        const note = make('p', 'form-note', 'Mods and ratings are stored in this browser only. Use publicly accessible HTTPS image and download URLs.');
+        const actions = make('div', 'form-actions');
+        const cancel = make('button', 'button', 'Cancel'); cancel.type = 'button'; cancel.addEventListener('click', () => existing ? openDetails(id) : closeModal());
+        const submit = make('button', 'button button-primary', existing ? 'Save changes' : 'Add mod'); submit.type = 'submit';
+        actions.append(cancel, submit); form.append(fields, note, actions);
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          const title = controls.title.value.trim();
+          const description = controls.description.value.trim();
+          const cover = controls.cover.value.trim();
+          const download = controls.download.value.trim();
+          if ((cover && !safeImage(cover)) || (download && !safeImage(download))) { showToast('Image and download links must use http or https URLs.'); return; }
+          const screenshotList = controls.screenshotsText.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+          if (screenshotList.some(url => !safeImage(url))) { showToast('Every screenshot must be a valid http or https URL.'); return; }
+          const record = {
+            id: existing?.id || `mod-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            title, creator: controls.creator.value.trim(), category: controls.category.value,
+            version: controls.version.value.trim() || '1.0', description,
+            cover: cover || '', screenshots: screenshotList, download,
+            createdAt: existing?.createdAt || new Date().toISOString().slice(0, 10)
+          };
+          if (existing) mods = mods.map(item => item.id === id ? record : item);
+          else mods.unshift(record);
+          if (!saveMods()) return;
+          closeModal(); renderMods(); showToast(existing ? 'Mod updated.' : 'Mod added to the galaxy.');
+        });
+        modalBody.append(form);
+        openModal(existing ? 'Edit mod' : 'Add a mod', true);
+        controls.title.focus();
+      }
+      function deleteMod(id) {
+        if (!isAdmin) return;
+        const mod = mods.find(item => item.id === id);
+        if (!mod || !window.confirm(`Delete “${mod.title}” from this browser? This cannot be undone.`)) return;
+        mods = mods.filter(item => item.id !== id);
+        delete ratings[id];
+        saveMods(); saveRatings(); closeModal(); renderMods(); showToast('Mod deleted.');
+      }
 
-.admin-btn{
-background:linear-gradient(90deg,var(--purple),var(--cyan));
-border:none;
-padding:10px 18px;
-border-radius:12px;
-color:white;
-cursor:pointer;
-font-weight:bold;
-}
-
-.hero{
-text-align:center;
-padding:110px 20px 60px;
-}
-
-.hero h1{
-font-size:70px;
-font-weight:900;
-background:linear-gradient(90deg,var(--cyan),#fff,var(--purple));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.hero p{
-color:#c6d3ff;
-font-size:22px;
-margin-top:10px;
-}
-
-.search-box{
-max-width:700px;
-margin:35px auto;
-}
-
-.search-box input{
-width:100%;
-padding:18px;
-border-radius:16px;
-border:none;
-outline:none;
-font-size:18px;
-background:rgba(255,255,255,.08);
-color:white;
-}
-
-.banner{
-margin:0 auto 40px;
-max-width:1100px;
-background:linear-gradient(90deg,var(--purple),var(--cyan));
-padding:24px;
-border-radius:20px;
-font-size:25px;
-font-weight:700;
-text-align:center;
-}
-
-.categories{
-display:flex;
-flex-wrap:wrap;
-gap:12px;
-justify-content:center;
-padding:0 20px 35px;
-}
-
-.category-btn{
-background:rgba(255,255,255,.08);
-border:1px solid rgba(255,255,255,.1);
-color:white;
-padding:12px 16px;
-border-radius:50px;
-cursor:pointer;
-transition:.3s;
-}
-
-.category-btn:hover{
-transform:translateY(-4px);
-background:var(--purple);
-}
-
-.section-title{
-font-size:32px;
-margin:40px 5% 20px;
-}
-
-.mods-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:24px;
-padding:0 5% 60px;
-}
-
-.mod-card{
-background:linear-gradient(180deg,var(--card),var(--card2));
-border-radius:20px;
-overflow:hidden;
-transition:.3s;
-border:1px solid
+      searchInput.addEventListener('input', renderMods);
+      adminButton.addEventListener('click', () => {
+        if (isAdmin) { isAdmin = false; updateAdminUI(); renderMods(); showToast('Admin mode locked.'); if (currentModId) openDetails(currentModId); }
+        else openLogin();
+      });
+      addButton.addEventListener('click', () => openModForm());
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModal(); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && !backdrop.hidden) closeModal(); });
+      renderCategories();
+      renderMods();
+      updateAdminUI();
+    })();
+  </script>
+</body>
+</html>
